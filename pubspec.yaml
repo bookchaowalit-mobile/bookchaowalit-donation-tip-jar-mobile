@@ -1,4 +1,4 @@
-name: donation-tip-jar
+name: donation_tip_jar
 description: "Donation Tip Jar — Mobile app (flutter)"
 publish_to: "none"
 version: 1.0.0+1
