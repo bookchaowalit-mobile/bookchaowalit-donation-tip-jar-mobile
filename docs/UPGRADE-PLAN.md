@@ -26,6 +26,7 @@ Score: 7.5/10 — integer-cent tip/split maths with strict input parsing, error 
 - Bug fix: the custom tip used `int.tryParse` (accepting `0x10` as 16 and `+5`), and while it showed "Use 0 to 100" the card still displayed a total computed from the preset percentage. New `parsePercent` accepts plain 0–100 digits and the result card is hidden while either input is invalid.
 - Edge-case unit tests: comma placement, amount limits and near-misses (Arabic-Indic digits, `.5`, `+5`), percent parsing, zero bill/tip, shares summing to the total and differing by at most one cent over many bills/splits, round-up extra, 100% tip on the largest bill.
 - Accessibility: people count is a live region. Widget tests: invalid custom percent hides the result, comma amount error, round-up extra, disabled "fewer people" at one, a11y guidelines, 200% text scale.
+- Bug fix (accessibility): the "People" row overflowed by 57 px at 200% text size on a 360 px-wide phone; the label now wraps. The text-scale widget test runs at phone width (it previously used the 800 px default test surface).
 
 ## Done in pass 2
 

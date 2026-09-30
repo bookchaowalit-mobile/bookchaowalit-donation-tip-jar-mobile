@@ -87,11 +87,14 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Semantics(
-                liveRegion: true,
-                child: Text('People: $_people', style: textTheme.titleMedium),
+              // Expanded (not Spacer) so the label wraps at large text sizes
+              // instead of pushing the buttons off a phone screen.
+              Expanded(
+                child: Semantics(
+                  liveRegion: true,
+                  child: Text('People: $_people', style: textTheme.titleMedium),
+                ),
               ),
-              const Spacer(),
               IconButton(
                 tooltip: 'Fewer people',
                 icon: const Icon(Icons.remove),
