@@ -2,7 +2,7 @@
 
 ## Current state
 
-Score: 7/10 — core feature with tested pure-Dart logic, honest CI and fail-closed release signing; still no app icon or E2E flow.
+Score: 7.5/10 — integer-cent tip/split maths with strict input parsing, error states, a11y guideline tests and fail-closed signing; no persistence, currencies, icon or E2E flow yet.
 
 ## Backlog
 
@@ -17,10 +17,17 @@ Score: 7/10 — core feature with tested pure-Dart logic, honest CI and fail-clo
 - Add a CI job that builds a signed release bundle from repository secrets (keystore decoded at runtime, never committed).
 
 ### P2
-- Tablet layout (NavigationRail) and 130% text-scale widget test.
+- Tablet layout (NavigationRail).
 - Localisation (Thai/English) for UI strings.
 
-## Done in this pass (pass 2)
+## Done in this pass (pass 3)
+
+- Bug fix: amounts stripped every comma, so a European-style `12,50` was read as 1,250.00 and `1,2` as 12.00. Commas are now accepted only as thousands separators (`1,234.56`); anything else shows the amount error.
+- Bug fix: the custom tip used `int.tryParse` (accepting `0x10` as 16 and `+5`), and while it showed "Use 0 to 100" the card still displayed a total computed from the preset percentage. New `parsePercent` accepts plain 0–100 digits and the result card is hidden while either input is invalid.
+- Edge-case unit tests: comma placement, amount limits and near-misses (Arabic-Indic digits, `.5`, `+5`), percent parsing, zero bill/tip, shares summing to the total and differing by at most one cent over many bills/splits, round-up extra, 100% tip on the largest bill.
+- Accessibility: people count is a live region. Widget tests: invalid custom percent hides the result, comma amount error, round-up extra, disabled "fewer people" at one, a11y guidelines, 200% text scale.
+
+## Done in pass 2
 
 - Release builds no longer sign with the debug key: `android/app/build.gradle.kts` reads the ignored `android/key.properties` and a Gradle guard fails any release assemble/bundle without it (pattern from `bookchaowalit-goal-tracker-mobile`). Root `.gitignore` also ignores `key.properties`, `*.jks`, `*.keystore`; README documents the setup. Not build-verified here (no Android SDK/Gradle in this environment).
 

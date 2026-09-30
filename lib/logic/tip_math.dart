@@ -3,15 +3,31 @@ library;
 
 const tipPresets = [10, 15, 18, 20];
 
+/// Commas are only accepted as thousands separators (`1,234.56`); `12,50`
+/// or `1,2` are rejected rather than silently read as 1250 or 12.
+final _amountPattern = RegExp(r'^(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d{0,2})?$');
+
 /// Parses a money amount like `12`, `12.5`, `1,234.56` into cents.
-/// Returns null for negatives, more than two decimals or garbage.
+/// Returns null for negatives, more than two decimals, misplaced commas or
+/// garbage.
 int? parseAmountCents(String input) {
-  final s = input.trim().replaceAll(',', '');
+  final trimmed = input.trim();
+  if (!_amountPattern.hasMatch(trimmed)) return null;
+  final s = trimmed.replaceAll(',', '');
   final m = RegExp(r'^(\d{1,9})(?:\.(\d{0,2}))?$').firstMatch(s);
   if (m == null) return null;
   final whole = int.parse(m.group(1)!);
   final frac = (m.group(2) ?? '').padRight(2, '0');
   return whole * 100 + int.parse(frac);
+}
+
+/// Parses a whole tip percentage from 0 to 100 (plain decimal digits only;
+/// `int.tryParse` would also accept `0x10` or `+5`).
+int? parsePercent(String input) {
+  final s = input.trim();
+  if (!RegExp(r'^[0-9]{1,3}$').hasMatch(s)) return null;
+  final value = int.parse(s);
+  return value > 100 ? null : value;
 }
 
 String formatCents(int cents) =>

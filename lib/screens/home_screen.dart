@@ -27,12 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final bill = parseAmountCents(_bill.text);
-    final customPct = int.tryParse(_custom.text.trim());
-    final customInvalid = _custom.text.trim().isNotEmpty &&
-        (customPct == null || customPct < 0 || customPct > 100);
-    final pct =
-        _custom.text.trim().isEmpty || customInvalid ? _percent : customPct!;
-    final result = bill == null
+    final customPct = parsePercent(_custom.text);
+    final customInvalid = _custom.text.trim().isNotEmpty && customPct == null;
+    final pct = customPct ?? _percent;
+    // No result while either field is invalid, so the card never shows a
+    // total computed from a percentage the user did not enter.
+    final result = bill == null || customInvalid
         ? null
         : computeTip(
             billCents: bill,
@@ -87,7 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Text('People: $_people', style: textTheme.titleMedium),
+              Semantics(
+                liveRegion: true,
+                child: Text('People: $_people', style: textTheme.titleMedium),
+              ),
               const Spacer(),
               IconButton(
                 tooltip: 'Fewer people',
@@ -110,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           if (result != null)
             Card(
+              key: const Key('result'),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
